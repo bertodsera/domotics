@@ -14,7 +14,7 @@ written by Berto 'd Sera
 
 class DistributedServiceI2CCore : public virtual DistributedService {   
   public:
-    DistributedServiceI2CCore(uint8_t, uint8_t);
+    DistributedServiceI2CCore(uint8_t, uint8_t, bool);
     
     // payload transport core commands
     void coreSend(void);

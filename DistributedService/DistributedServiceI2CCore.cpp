@@ -10,24 +10,22 @@ written by Berto 'd Sera
 #include <WSWire.h>
 
 
-DistributedServiceI2CCore::DistributedServiceI2CCore(uint8_t _id, uint8_t _payloadSize) 
+DistributedServiceI2CCore::DistributedServiceI2CCore(uint8_t _id, uint8_t _payloadSize, bool _master) 
   : DistributedService( _id, _payloadSize ) {  
 
-  // join i2c bus without address
-  Wire.begin(serviceId);     
+  // join i2c bus with address
+  if (_master) {
+    Wire.begin(1);    
+  } else {  
+    Wire.begin(serviceId);
+  }  
 }
 
 
 void DistributedServiceI2CCore::coreSend(void) {
-  uint8_t index = 0;  
-  
-  while (index < sizeOfPayload) {
-    Wire.write(servicePayload[index]);  
-    index++;
-  }  
-  
-  // send crc after the payload  
-  Wire.write(CRC8(servicePayload, sizeOfPayload));    
+  servicePayload[sizeOfPayload] = CRC8(servicePayload, sizeOfPayload);
+  Wire.write(servicePayload,sizeOfPayload+1);  
+  inspect();
 }
 
 
@@ -39,19 +37,15 @@ void DistributedServiceI2CCore::coreGet(void) {
 
   while(Wire.available())    // slave may send less than requested
   { 
-    if ( index < sizeOfPayload ) {
-      servicePayload[index] = Wire.read(); // receive a byte       
+    if ( index <= sizeOfPayload ) {
+      servicePayload[index] = Wire.read(); // receive a byte    
     }  
-    
-    // get crc if payload is fully received
-    if (index == sizeOfPayload) {
-      receivedCrc = Wire.read(); // receive low crc byte   
-    } 
-    else {  
+    else {
       // NOTE! This should never happen, it would mean the client is 
       // sending over more bytes than we requested 
       Wire.read(); // throw it away
-    }   
+      Serial.println(F("Throwing away data "));  
+    }  
     index++;
   }
 }   

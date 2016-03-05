@@ -34,7 +34,7 @@ class DistributedService {
     // utils
     void erasePayload(void);
     byte CRC8(const byte*, byte);
-    byte receivedCrc;    
+    //byte receivedCrc;    
     
   public:
     DistributedService(uint8_t, uint8_t);

@@ -14,7 +14,7 @@ written by Berto 'd Sera
 DistributedService::DistributedService(uint8_t _id, uint8_t _payloadSize) {
   serviceId      = _id;
   sizeOfPayload  = _payloadSize;
-  servicePayload = new byte[sizeOfPayload];
+  servicePayload = new byte[sizeOfPayload+1];
   erasePayload();
 }
 
@@ -41,10 +41,9 @@ byte DistributedService::CRC8(const byte *data, byte len) {
 
 
 void DistributedService::erasePayload(void) {
-  for ( uint8_t a = 0; a < sizeOfPayload; a++ ) {  
+  for ( uint8_t a = 0; a <= sizeOfPayload; a++ ) {  
     servicePayload[a] = 0;   
   }
-  receivedCrc = 0;  
 }
 
 
@@ -60,7 +59,7 @@ void DistributedService::inspect(void) {
   }
   
   Serial.print(F("   CRC: "));
-  Serial.print((int)receivedCrc);   
+  Serial.print((int)servicePayload[sizeOfPayload]);   
   Serial.print(F("/"));
   Serial.print((int)CRC8(servicePayload, sizeOfPayload));   
   Serial.println();   
@@ -68,5 +67,5 @@ void DistributedService::inspect(void) {
 
 
 bool DistributedService::isValid(void) {
-  return (receivedCrc == CRC8(servicePayload, sizeOfPayload));
+  return (servicePayload[sizeOfPayload] == CRC8(servicePayload, sizeOfPayload));
 }

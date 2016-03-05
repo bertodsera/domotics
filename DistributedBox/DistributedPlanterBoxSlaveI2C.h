@@ -10,6 +10,7 @@ written by Berto 'd Sera
 #define DistributedPlanterBoxSlaveI2C_h
 
 #include "Arduino.h"
+#include <DistributedService.h>
 #include <DistributedPlanterBoxSlave.h>
 #include <DistributedServiceI2CSlave.h>
 
@@ -20,6 +21,7 @@ class DistributedPlanterBoxSlaveI2C :
   public:
     DistributedPlanterBoxSlaveI2C(uint8_t);
     void slaveImplementGet(void); 
+    void slavePrepareSend(void);
 };
 
 

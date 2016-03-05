@@ -1,5 +1,7 @@
 /* DistributedServiceI2CSlave library
  
+This class describes the "slave" side of the pond  
+ 
 MIT license
 written by Berto 'd Sera
 */
@@ -9,6 +11,7 @@ written by Berto 'd Sera
 #include <DistributedServiceI2CSlave.h>
 #include <WSWire.h>
 
+// base for polimorphism
 DistributedService *node;
 
 
@@ -19,7 +22,7 @@ void slaveGetWrapper(int howMany) { node->slaveGet(); }
 
 DistributedServiceI2CSlave::DistributedServiceI2CSlave(uint8_t _id, uint8_t _payloadSize) :
   DistributedService( _id, _payloadSize ), 
-  DistributedServiceI2CCore( _id, _payloadSize ) {  
+  DistributedServiceI2CCore( _id, _payloadSize, false ) {  
 
   // register callbacks
   Wire.onReceive(slaveGetWrapper);    
@@ -28,6 +31,8 @@ DistributedServiceI2CSlave::DistributedServiceI2CSlave(uint8_t _id, uint8_t _pay
 
 
 void DistributedServiceI2CSlave::slaveSend(void) {
+  Serial.println(F("Sending "));   
+  servicePayload[0]=99;
   slavePrepareSend();  
   coreSend();   
 }

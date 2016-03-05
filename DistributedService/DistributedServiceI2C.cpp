@@ -1,4 +1,6 @@
 /* DistributedServiceI2C library
+
+This class describes the "master" side of the pond 
  
 MIT license
 written by Berto 'd Sera
@@ -16,7 +18,7 @@ DistributedService *remotenode;
 
 DistributedServiceI2C::DistributedServiceI2C(uint8_t _id, uint8_t _payloadSize) : 
   DistributedService( _id, _payloadSize ), 
-  DistributedServiceI2CCore( _id, _payloadSize ) {  }
+  DistributedServiceI2CCore( _id, _payloadSize, true ) {  }
 
 
 void DistributedServiceI2C::masterSend(void) {
@@ -29,7 +31,12 @@ void DistributedServiceI2C::masterSend(void) {
 
 
 void DistributedServiceI2C::masterGet(void) {  
-  Wire.requestFrom(serviceId, sizeOfPayload);    // request 6 bytes from slave device #2
+  // request payload + 1 byte crc
+  uint8_t total = sizeOfPayload+1;
+  Wire.requestFrom(serviceId, total);
+  
+  Serial.print(F("Requesting "));  
+  Serial.println(serviceId);
 
   coreGet();
 }   

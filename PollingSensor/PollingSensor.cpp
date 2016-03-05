@@ -68,9 +68,9 @@ float PollingSensor::level(bool _update) {
     poll(); 
     
     // Log poll
-    Serial.print(" Polling ");
+    Serial.print(F(" Polling "));
     Serial.print(label);   
-    Serial.print(" level measured: ");    
+    Serial.print(F(" level measured: "));    
     Serial.println(lastLevel);        
   }
 
