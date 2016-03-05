@@ -20,8 +20,7 @@ class DistributedService {
        Resident Payload    
        ----------------
           This is just an array of bytes. It knows nothing of the 
-          objects that will point to it, to decode it, it is static, 
-          to allow callbacks to deal with it. */
+          objects that will point to it, to decode it */
     byte *servicePayload;   
 
     /* Payload size in bytes (gets set on init)
@@ -48,8 +47,9 @@ class DistributedService {
     
     // actual actions triggered by the callbacks
     virtual void slaveImplementGet(void) {};    
-    virtual void slavePrepareSend(void) {};    
+    virtual void slavePrepareSend(void) {};   
     
+    // actual services implemented at this level
     void inspect(void);   // print out servicePayload  
     bool isValid(void);   // check crc      
 };
