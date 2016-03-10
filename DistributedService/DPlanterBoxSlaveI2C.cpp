@@ -8,25 +8,20 @@ written by Berto 'd Sera
 
 #include "Arduino.h"
 #include <DistributedService.h>
-#include <DistributedPlanterBoxSlave.h>
+#include <DistributedServiceI2CCore.h>
 #include <DistributedServiceI2CSlave.h>
+#include <DistributedPlanterBox.h>
+#include <DistributedPlanterBoxSlave.h>
 #include <DistributedPlanterBoxSlaveI2C.h>
 
-
 DistributedPlanterBoxSlaveI2C::DistributedPlanterBoxSlaveI2C(uint8_t _id) :
-  DistributedPlanterBoxSlave(),
   DistributedService( _id, PLANTERBOXPAYLOAD ), 
   DistributedServiceI2CCore( _id, PLANTERBOXPAYLOAD, false ), 
   DistributedServiceI2CSlave::DistributedServiceI2CSlave(_id, PLANTERBOXPAYLOAD) {
   
-  update();  
+  box = new DistributedPlanterBoxSlave();  
+  box->update();  
+  
+  box->inspectBox();
 }
 
-void DistributedPlanterBoxSlaveI2C::slaveImplementGet(void) {
-  //update();
-} 
-
-
-void DistributedPlanterBoxSlaveI2C::slavePrepareSend(void) {
-  Serial.println(F("slavePrepareSend "));    
-}

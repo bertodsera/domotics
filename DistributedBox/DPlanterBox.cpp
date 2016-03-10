@@ -1,4 +1,4 @@
-/* DistributedPlanterBox library
+/* DPlanterBox library
 
 This interface describes the basics of the planter box service (it is transport agnostic)
  
@@ -7,23 +7,30 @@ written by Berto 'd Sera
 */
 
 #include "Arduino.h"
-#include <DistributedPlanterBox.h>
+#include <DBox.h>
+#include <DPlanterBox.h>
 
 
-DistributedPlanterBox::DistributedPlanterBox(void) {
+DPlanterBox::DPlanterBox(void) : DBox() {
   for ( uint8_t a = 0; a < PLANTERBOXPAYLOAD; a++ ) {    
     map.serialValue[a] = 0;
   }  
 }
 
-uint8_t DistributedPlanterBox::index(bool _side) {
-  // true == right
-  if (_side) { return PLANTER_R; }
-  else { return PLANTER_L; }
-}
+
+void * DPlanterBox::mapAddress(void) {
+ void *a = &map.serialValue;
+ return a; 
+}  
 
 
-void DistributedPlanterBox::inspectPlanterBox(void) {
+void DPlanterBox::inspectBox(void) {
+  Serial.println(F("Planter Box")); 
+  Serial.println(F("===================================="));   
+  Serial.print(F("Map address: ")); 
+  uint16_t ptr = (uint16_t) mapAddress();                 // store 16-bit address, and then pretend that memory is a character array
+  Serial.println(ptr, HEX);
+  Serial.println(F("...................................."));     
   Serial.print(F("Humidity: ")); 
   Serial.print(map.box[0].humidity);
   Serial.print(F("% | "));   
@@ -42,3 +49,9 @@ void DistributedPlanterBox::inspectPlanterBox(void) {
   Serial.println(F("===================================="));  
 }
 
+
+uint8_t DPlanterBox::index(bool _side) {
+  // true == right
+  if (_side) { return PLANTER_R; }
+  else { return PLANTER_L; }
+}

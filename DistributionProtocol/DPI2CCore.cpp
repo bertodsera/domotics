@@ -1,35 +1,45 @@
-/* DistributedServiceI2CCore library
+/* DPI2CCore library
  
 MIT license
 written by Berto 'd Sera
 */
 
 #include "Arduino.h"
-#include <DistributedService.h>
-#include <DistributedServiceI2CCore.h>
+#include <DistributionProtocol.h>
+#include <DPI2CCore.h>
 #include <WSWire.h>
 
 
-DistributedServiceI2CCore::DistributedServiceI2CCore(uint8_t _id, uint8_t _payloadSize, bool _master) 
-  : DistributedService( _id, _payloadSize ) {  
+DPI2CCore::DPI2CCore(uint8_t _id, uint8_t _payloadSize, bool _master) 
+  : DistributionProtocol( _id, _payloadSize ) {  
 
   // join i2c bus with address
   if (_master) {
-    Wire.begin(1);    
+    Wire.begin();    
   } else {  
     Wire.begin(serviceId);
   }  
 }
 
 
-void DistributedServiceI2CCore::coreSend(void) {
+void DPI2CCore::coreSend(void) {
+  Serial.println(F("Sending data "));    
+  
+  // copy the box map top the protocol buffer
+  //memcpy ( box->mapAddress(), servicePayload, sizeOfPayload );  
+  
+  // compute crc to send
   servicePayload[sizeOfPayload] = CRC8(servicePayload, sizeOfPayload);
-  Wire.write(servicePayload,sizeOfPayload+1);  
+  
+  // send it out
+  Wire.write(servicePayload,sizeOfPayload+1);
+
+  // report  
   inspect();
 }
 
 
-void DistributedServiceI2CCore::coreGet(void) {
+void DPI2CCore::coreGet(void) {
   uint8_t index   = 0;
   
   // Make sure we write on a blank
@@ -48,5 +58,10 @@ void DistributedServiceI2CCore::coreGet(void) {
     }  
     index++;
   }
+  
+  // copy the protocol buffer to the box map (ignore on bad crc) 
+  if (isValid()) { 
+    //memcpy ( servicePayload, box->mapAddress(), sizeOfPayload );
+  }    
 }   
     

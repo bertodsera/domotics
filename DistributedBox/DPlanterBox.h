@@ -1,4 +1,4 @@
-/* DistributedPlanterBox library
+/* DPlanterBox library
 
 This interface describes the basics of the planter box service (it is transport agnostic)
 versions currently planned
@@ -9,10 +9,11 @@ MIT license
 written by Berto 'd Sera
 */
 
-#ifndef DistributedPlanterBox_h
-#define DistributedPlanterBox_h
+#ifndef DPlanterBox_h
+#define DPlanterBox_h
 
 #include "Arduino.h"
+#include <DBox.h>
 #define PLANTERBOXPAYLOAD 10
 
 #define PLANTER_R 0
@@ -45,16 +46,17 @@ typedef union BoxMap {
 };
 
 
-class DistributedPlanterBox {   
+class DPlanterBox : public virtual DBox {   
   protected:
     BoxMap map;
     // function used to univocally decode the right/left boolean selector
     uint8_t index(bool);    
     
   public:
-    DistributedPlanterBox();
-    
-    void inspectPlanterBox(void);  
+    DPlanterBox();
+
+    void * mapAddress(void);    
+    void inspectBox(void);  
 };
 
 #endif

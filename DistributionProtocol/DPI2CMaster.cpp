@@ -1,4 +1,4 @@
-/* DistributedServiceI2C library
+/* DPI2CMaster library
 
 This class describes the "master" side of the pond 
  
@@ -7,21 +7,18 @@ written by Berto 'd Sera
 */
 
 #include "Arduino.h"
-#include <DistributedService.h>
-#include <DistributedServiceI2CCore.h>
-#include <DistributedServiceI2C.h>
+#include <DistributionProtocol.h>
+#include <DPI2CCore.h>
+#include <DPI2CMaster.h>
 #include <WSWire.h>
 
 
-DistributedService *remotenode;
+DPI2CMaster::DPI2CMaster(uint8_t _id, uint8_t _payloadSize) : 
+  DistributionProtocol( _id, _payloadSize ), 
+  DPI2CCore( _id, _payloadSize, true ) {  }
 
 
-DistributedServiceI2C::DistributedServiceI2C(uint8_t _id, uint8_t _payloadSize) : 
-  DistributedService( _id, _payloadSize ), 
-  DistributedServiceI2CCore( _id, _payloadSize, true ) {  }
-
-
-void DistributedServiceI2C::masterSend(void) {
+void DPI2CMaster::masterSend(void) {
   Wire.beginTransmission(serviceId); // transmit to remote device
   
   coreSend();  
@@ -30,7 +27,7 @@ void DistributedServiceI2C::masterSend(void) {
 }
 
 
-void DistributedServiceI2C::masterGet(void) {  
+void DPI2CMaster::masterGet(void) {  
   // request payload + 1 byte crc
   uint8_t total = sizeOfPayload+1;
   Wire.requestFrom(serviceId, total);

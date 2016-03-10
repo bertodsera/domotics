@@ -1,4 +1,4 @@
-/* DistributedPlanterBoxMaster library
+/* DPlanterBoxMaster library
 
 This class describes the "slave" side of the planter service (it is transport agnostic)
  
@@ -6,16 +6,16 @@ MIT license
 written by Berto 'd Sera
 */
 
-#ifndef DistributedPlanterBoxMaster_h
-#define DistributedPlanterBoxMaster_h
+#ifndef DPlanterBoxMaster_h
+#define DPlanterBoxMaster_h
 
 #include "Arduino.h"
-#include <DistributedPlanterBox.h>
+#include <DPlanterBox.h>
 
 
-class DistributedPlanterBoxMaster : public virtual DistributedPlanterBox {      
+class DPlanterBoxMaster : public virtual DPlanterBox {      
   public:
-    DistributedPlanterBoxMaster();
+    DPlanterBoxMaster();
 
     // input from hardware
     float soilHumidity(bool);

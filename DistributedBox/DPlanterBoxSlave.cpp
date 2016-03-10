@@ -1,4 +1,4 @@
-/* DistributedPlanterBoxSlave library
+/* DPlanterBoxSlave library
 
 This class describes the "slave" side of the planter service 
  
@@ -7,8 +7,8 @@ written by Berto 'd Sera
 */
 
 #include "Arduino.h"
-#include <DistributedPlanterBox.h>
-#include <DistributedPlanterBoxSlave.h>
+#include <DPlanterBox.h>
+#include <DPlanterBoxSlave.h>
 #include <PollingSensor.h>
 #include <SoilHumiditySensor.h>
 
@@ -26,8 +26,8 @@ written by Berto 'd Sera
 #define AP_HUMSENS_R A0
 #define AP_HUMSENS_L A1
 
-DistributedPlanterBoxSlave::DistributedPlanterBoxSlave() 
-  : DistributedPlanterBox::DistributedPlanterBox() {
+DPlanterBoxSlave::DPlanterBoxSlave() 
+  : DPlanterBox::DPlanterBox() {
   // right box connected pin
   connected[PLANTER_R].set_id(DP_CONNECTED_R);
   connected[PLANTER_R].setRead();  
@@ -62,6 +62,11 @@ DistributedPlanterBoxSlave::DistributedPlanterBoxSlave()
   blueLED[PLANTER_L].setWrite();
   blueLED[PLANTER_L].writeLow();
   
+  // Buzzer function
+  buzzer.set_id(DP_BUZZER_L);
+  buzzer.setWrite();
+  buzzer.writeLow();
+  
   // init sensors
   humiditySensor[PLANTER_R] = new SoilHumiditySensor("Right", AP_HUMSENS_R, DP_SENSPWR_R);
   humiditySensor[PLANTER_L] = new SoilHumiditySensor("Left", AP_HUMSENS_L, DP_SENSPWR_L);
@@ -69,7 +74,7 @@ DistributedPlanterBoxSlave::DistributedPlanterBoxSlave()
     
     
 // encode/decode data    
-void DistributedPlanterBoxSlave::updateSoilHumidity(bool _side) {
+void DPlanterBoxSlave::updateSoilHumidity(bool _side) {
   int i = index(_side);
   
   // update the sensor only if requested 
@@ -91,7 +96,7 @@ void DistributedPlanterBoxSlave::updateSoilHumidity(bool _side) {
 }
 
 
-void DistributedPlanterBoxSlave::update(void) {
+void DPlanterBoxSlave::update(void) {
   updateConnected(true);
   updateConnected(false);
   updateOk(true);
@@ -103,13 +108,13 @@ void DistributedPlanterBoxSlave::update(void) {
 }
 
 
-bool DistributedPlanterBoxSlave::errorState(bool _side) {
+bool DPlanterBoxSlave::errorState(bool _side) {
   int i = index(_side);
   return ((map.box[i].pins & ERROR_PIN) != 0); 
 }
 
 
-void DistributedPlanterBoxSlave::updatePin(bool _side, const int _mask, bool _on) {
+void DPlanterBoxSlave::updatePin(bool _side, const int _mask, bool _on) {
   int i = index(_side);
   if (_on) { 
     map.box[i].pins = map.box[i].pins | _mask; 
@@ -120,31 +125,39 @@ void DistributedPlanterBoxSlave::updatePin(bool _side, const int _mask, bool _on
 }
 
 
-void DistributedPlanterBoxSlave::updateConnected(bool _side) {
-  bool state = connected[index(_side)].isSet();
+void DPlanterBoxSlave::updateConnected(bool _side) {
+  int i = index(_side);  
+  bool wasConnected = ((map.box[i].pins & CONNECTED_PIN) == CONNECTED_PIN);
+  bool state = connected[i].isSet();
   
   updatePin(_side, CONNECTED_PIN, state);
   if (state) {
-    redLED[index(_side)].writeLow(); 
-    greenLED[index(_side)].writeHigh();     
+    redLED[i].writeLow(); 
+    greenLED[i].writeHigh();     
   }
   else {
-    redLED[index(_side)].writeHigh(); 
-    greenLED[index(_side)].writeLow();     
+    redLED[i].writeHigh(); 
+    greenLED[i].writeLow();   
+    // play buzzer only immediately after disconnection
+    if (wasConnected) {
+      buzzer.writeHigh();
+      delay(500);
+      buzzer.writeLow();
+    }  
   }
 } 
 
 
-void DistributedPlanterBoxSlave::updateOk(bool _side) {
+void DPlanterBoxSlave::updateOk(bool _side) {
   bool state = connected[index(_side)].isSet();  
   updatePin(_side, OK_PIN, state);  
 }    
     
-void DistributedPlanterBoxSlave::updateWater(bool _side, bool _on) {
+void DPlanterBoxSlave::updateWater(bool _side, bool _on) {
   updatePin(_side, WATER_PIN, _on); 
 }
 
-void DistributedPlanterBoxSlave::updateError(bool _side) {
+void DPlanterBoxSlave::updateError(bool _side) {
   bool state = connected[index(_side)].isSet();   
   updatePin(_side, ERROR_PIN, !state); 
 }

@@ -1,4 +1,4 @@
-/* DistributedService library
+/* DistributionProtocol library
  
   Interface for distributed function. The actual network transport can use either I2C or Bluetooth, and it is 
   specified in the derived classes.
@@ -8,10 +8,10 @@ written by Berto 'd Sera
 */
 
 #include "Arduino.h"
-#include <DistributedService.h>
+#include <DistributionProtocol.h>
 
 
-DistributedService::DistributedService(uint8_t _id, uint8_t _payloadSize) {
+DistributionProtocol::DistributionProtocol(uint8_t _id, uint8_t _payloadSize) {
   serviceId      = _id;
   sizeOfPayload  = _payloadSize;
   servicePayload = new byte[sizeOfPayload+1];
@@ -22,7 +22,7 @@ DistributedService::DistributedService(uint8_t _id, uint8_t _payloadSize) {
 //CRC-8 - based on the CRC8 formulas by Dallas/Maxim
 //code released under the therms of the GNU GPL 3.0 license
 // http://www.leonardomiliani.com/en/2013/un-semplice-crc8-per-arduino/
-byte DistributedService::CRC8(const byte *data, byte len) {
+byte DistributionProtocol::CRC8(const byte *data, byte len) {
   byte crc = 0x00;
   
   while (len--) {
@@ -40,14 +40,16 @@ byte DistributedService::CRC8(const byte *data, byte len) {
 }
 
 
-void DistributedService::erasePayload(void) {
-  for ( uint8_t a = 0; a <= sizeOfPayload; a++ ) {  
+void DistributionProtocol::erasePayload(void) {
+  for ( uint8_t a = 0; a < sizeOfPayload; a++ ) {  
     servicePayload[a] = 0;   
   }
+  // put broken crc
+  servicePayload[sizeOfPayload] = 255;
 }
 
 
-void DistributedService::inspect(void) {
+void DistributionProtocol::inspect(void) {
   Serial.print(F("Payload: "));
   Serial.print((int)sizeOfPayload);   
   Serial.print(F(" "));
@@ -66,6 +68,6 @@ void DistributedService::inspect(void) {
 }    
 
 
-bool DistributedService::isValid(void) {
+bool DistributionProtocol::isValid(void) {
   return (servicePayload[sizeOfPayload] == CRC8(servicePayload, sizeOfPayload));
 }
