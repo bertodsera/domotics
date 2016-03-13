@@ -47,7 +47,6 @@ DPI2CSlave::DPI2CSlave(uint8_t _id, uint8_t _payloadSize) :
 
 
 void DPI2CSlave::slaveSend(void) {
-  Serial.println(F("--test--"));    
   slavePrepareSend();  
   coreSend();  
 }
@@ -61,8 +60,8 @@ void DPI2CSlave::slaveGet(void) {
 }
 
 
-void DPI2CSlave::test(void) {
-  Serial.println(F("--test--"));  
+void DPI2CSlave::boxUpdate(void) {
+  box->update();   
 }
 
 

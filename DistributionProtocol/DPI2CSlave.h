@@ -26,7 +26,8 @@ class DPI2CSlave : public virtual DPI2CCore {
     void slaveSend(void);
     void slaveGet(void);  
     
-    void test(void);
+    // cycle for the box object
+    void boxUpdate(void);
 };
 
 // There shall be an instance for this protocol

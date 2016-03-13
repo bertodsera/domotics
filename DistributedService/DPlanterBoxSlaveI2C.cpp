@@ -34,7 +34,7 @@ void DPlanterBoxSlaveI2C::slaveImplementGet(void) {
 }    
     
 void DPlanterBoxSlaveI2C::slavePrepareSend(void) {
-  
+  box->update(); 
 }  
 
 
