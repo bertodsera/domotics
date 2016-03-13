@@ -132,21 +132,26 @@ void DPlanterBoxSlave::updateConnected(bool _side) {
   
   updatePin(_side, CONNECTED_PIN, state);
   if (state) {
+    // connected state
     redLED[i].writeLow(); 
     greenLED[i].writeHigh();     
   }
   else {
+    // disconnected state
     redLED[i].writeHigh(); 
     greenLED[i].writeLow();   
     // play buzzer only immediately after disconnection
     if (wasConnected) {
-      buzzer.writeHigh();
-      delay(500);
-      buzzer.writeLow();
+      buzz(1000);
     }  
   }
 } 
 
+void DPlanterBoxSlave::buzz(int _time) {
+  buzzer.writeHigh();
+  delay(_time);
+  buzzer.writeLow();
+}
 
 void DPlanterBoxSlave::updateOk(bool _side) {
   bool state = connected[index(_side)].isSet();  

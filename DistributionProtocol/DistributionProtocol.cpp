@@ -49,6 +49,16 @@ void DistributionProtocol::erasePayload(void) {
 }
 
 
+void DistributionProtocol::readFromBox(void) { 
+  memcpy(servicePayload,box->mapAddress(),sizeOfPayload);  
+}
+
+
+void DistributionProtocol::writeToBox(void) { 
+  memcpy(box->mapAddress(),servicePayload,sizeOfPayload);  
+}
+
+
 void DistributionProtocol::inspect(void) {
   Serial.print(F("Payload: "));
   Serial.print((int)sizeOfPayload);   

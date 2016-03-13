@@ -64,6 +64,7 @@ class DPlanterBoxSlave : public virtual DPlanterBox {
     void  updateOk(bool);    
     void  updateWater(bool,bool);    
     void  updateError(bool);    
+    void  buzz(int);
 };
 
 #endif

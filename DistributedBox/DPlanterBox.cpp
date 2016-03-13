@@ -19,7 +19,7 @@ DPlanterBox::DPlanterBox(void) : DBox() {
 
 
 void * DPlanterBox::mapAddress(void) {
- void *a = &map.serialValue;
+ void *a = &map;
  return a; 
 }  
 
@@ -27,10 +27,6 @@ void * DPlanterBox::mapAddress(void) {
 void DPlanterBox::inspectBox(void) {
   Serial.println(F("Planter Box")); 
   Serial.println(F("===================================="));   
-  Serial.print(F("Map address: ")); 
-  uint16_t ptr = (uint16_t) mapAddress();                 // store 16-bit address, and then pretend that memory is a character array
-  Serial.println(ptr, HEX);
-  Serial.println(F("...................................."));     
   Serial.print(F("Humidity: ")); 
   Serial.print(map.box[0].humidity);
   Serial.print(F("% | "));   

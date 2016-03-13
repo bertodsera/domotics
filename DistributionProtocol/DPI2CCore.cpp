@@ -22,20 +22,15 @@ DPI2CCore::DPI2CCore(uint8_t _id, uint8_t _payloadSize, bool _master)
 }
 
 
-void DPI2CCore::coreSend(void) {
-  Serial.println(F("Sending data "));    
-  
+void DPI2CCore::coreSend(void) { 
   // copy the box map top the protocol buffer
-  //memcpy ( box->mapAddress(), servicePayload, sizeOfPayload );  
+  readFromBox();
   
   // compute crc to send
   servicePayload[sizeOfPayload] = CRC8(servicePayload, sizeOfPayload);
   
   // send it out
   Wire.write(servicePayload,sizeOfPayload+1);
-
-  // report  
-  inspect();
 }
 
 
@@ -61,7 +56,7 @@ void DPI2CCore::coreGet(void) {
   
   // copy the protocol buffer to the box map (ignore on bad crc) 
   if (isValid()) { 
-    //memcpy ( servicePayload, box->mapAddress(), sizeOfPayload );
+    writeToBox();
   }    
 }   
     

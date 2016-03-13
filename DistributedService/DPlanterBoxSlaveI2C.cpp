@@ -1,4 +1,4 @@
-/* DistributedPlanterBoxSlaveI2C library
+/* DPlanterBoxSlaveI2C library
 
 This class implements the "slave" side of the planter service, on an I2C network 
  
@@ -7,21 +7,38 @@ written by Berto 'd Sera
 */
 
 #include "Arduino.h"
-#include <DistributedService.h>
-#include <DistributedServiceI2CCore.h>
-#include <DistributedServiceI2CSlave.h>
-#include <DistributedPlanterBox.h>
-#include <DistributedPlanterBoxSlave.h>
-#include <DistributedPlanterBoxSlaveI2C.h>
+#include <WSWire.h>
+#include <DistributionProtocol.h>
+#include <DPI2CCore.h>
+#include <DPI2CSlave.h>
+#include <DPlanterBox.h>
+#include <DPlanterBoxSlave.h>
+#include <DPlanterBoxSlaveI2C.h>
 
-DistributedPlanterBoxSlaveI2C::DistributedPlanterBoxSlaveI2C(uint8_t _id) :
-  DistributedService( _id, PLANTERBOXPAYLOAD ), 
-  DistributedServiceI2CCore( _id, PLANTERBOXPAYLOAD, false ), 
-  DistributedServiceI2CSlave::DistributedServiceI2CSlave(_id, PLANTERBOXPAYLOAD) {
+
+DPlanterBoxSlaveI2C::DPlanterBoxSlaveI2C(uint8_t _id) :
+  DistributionProtocol::DistributionProtocol( _id, PLANTERBOXPAYLOAD ), 
+  DPI2CCore::DPI2CCore( _id, PLANTERBOXPAYLOAD, false ), 
+  DPI2CSlave::DPI2CSlave(_id, PLANTERBOXPAYLOAD) {
   
-  box = new DistributedPlanterBoxSlave();  
+  box = new DPlanterBoxSlave();  
   box->update();  
   
-  box->inspectBox();
+  box->inspectBox(); 
+  readFromBox();
 }
+
+
+void DPlanterBoxSlaveI2C::slaveImplementGet(void) {
+  
+}    
+    
+void DPlanterBoxSlaveI2C::slavePrepareSend(void) {
+  
+}  
+
+
+
+
+
 

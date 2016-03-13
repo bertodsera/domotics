@@ -7,39 +7,62 @@ written by Berto 'd Sera
 */
 
 #include "Arduino.h"
+#include <DistributionProtocol.h>
 #include <DPI2CCore.h>
 #include <DPI2CSlave.h>
 #include <WSWire.h>
 
-// base for polimorphism
-DistributedProtocol *node;
+// Pointer to the instance for this protocol
+// it will implement the DistributionProtocol interface
+DPI2CSlave *node;
 
 
-// Callback wrappers
-void slaveSendWrapper(void) { node->slaveSend(); }
-void slaveGetWrapper(int howMany) { node->slaveGet(); }
+// Callback wrapper functions
+void slaveSendWrapper(void) { 
+  if (node) {
+    node->slaveSend();
+  }
+  else { Serial.println(F("Node is NULL, skipping send")); }
+}
+
+void slaveGetWrapper(int howMany) { 
+  Serial.println((uint16_t)node,HEX);
+  if (node) {
+    Serial.println(F("Getting"));
+    node->slaveSend();
+  }
+  else { Serial.println(F("Skip get")); }
+}
+
 
 
 DPI2CSlave::DPI2CSlave(uint8_t _id, uint8_t _payloadSize) :
-  DistributedProtocol( _id, _payloadSize ), 
+  DistributionProtocol( _id, _payloadSize ), 
   DPI2CCore( _id, _payloadSize, false ) {  
 
   // register callbacks
   Wire.onReceive(slaveGetWrapper);    
-  Wire.onRequest(slaveSendWrapper); 
+  Wire.onRequest(slaveSendWrapper);     
 }
 
 
 void DPI2CSlave::slaveSend(void) {
-  Serial.println(F("Sending "));   
-  servicePayload[0]=99;
-
-  coreSend();   
+  Serial.println(F("--test--"));    
+  slavePrepareSend();  
+  coreSend();  
 }
   
 void DPI2CSlave::slaveGet(void) {
-  coreGet(); 
+  // check CRC before using the data, ignore if not valid
+  // TODO set error LED on CRC error
+  if (isValid()) {
+   // slaveImplementGet();   
+  }  
 }
 
+
+void DPI2CSlave::test(void) {
+  Serial.println(F("--test--"));  
+}
 
 

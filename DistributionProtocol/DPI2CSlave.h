@@ -13,14 +13,27 @@ written by Berto 'd Sera
 #include <DPI2CCore.h>
 
 
+// Callback wrapper functions (forward declaration)
+void slaveSendWrapper(void);
+void slaveGetWrapper(int);
+
+
 class DPI2CSlave : public virtual DPI2CCore {   
   public:
-    DPI2CSlave(uint8_t, uint8_t);
-    
+    DPI2CSlave(uint8_t, uint8_t);     
+        
     // payload transport commands
     void slaveSend(void);
     void slaveGet(void);  
+    
+    void test(void);
 };
+
+// There shall be an instance for this protocol
+// it will implement this interface
+extern DPI2CSlave *node;
+
+
 
 #endif
 
